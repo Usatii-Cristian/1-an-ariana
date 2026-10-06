@@ -6,11 +6,11 @@ export const continut = {
   el: "Cristian",
 
   // Ziua în care a început povestea (apare în calendar și în numărătoarea de la final)
-  inceput: { an: 2025, luna: 10, zi: 6 },
+  inceput: { an: 2025, luna: 10, zi: 8 },
 
   // Pagina „Unde a început povestea noastră”
-  locul: "Locul nostru",
-  pozaLoc: "", // gol = harta desenată
+  locul: "La școală",
+  pozaLoc: "", // gol = școala desenată
 
   // Muzica de fundal (ex: "/muzica.mp3"); gol = fără muzică
   muzica: "",
@@ -34,8 +34,9 @@ export const continut = {
   scrisoare: {
     salut: "Ariana, iubirea mea,",
     paragrafe: [
-      "Acum un an, viața mea s-a schimbat pentru totdeauna, într-o zi care părea una obișnuită. Atunci nu știam încă, dar în ziua aceea primeam cel mai frumos dar pe care mi l-ar fi putut face viața: pe tine.",
-      "Îți mai amintești începuturile noastre? Emoțiile acelea, mesajele pe care le citeam de zece ori, întâlnirile după care nu reușeam să adorm de cât zâmbeam. Eu mi le amintesc pe toate și le păstrez în suflet ca pe cele mai prețioase comori.",
+      "Acum un an, viața mea s-a schimbat pentru totdeauna, într-o zi de școală care părea una obișnuită. Atunci nu știam încă, dar în ziua aceea primeam cel mai frumos dar pe care mi l-ar fi putut face viața: pe tine.",
+      "Îți mai amintești? 8 octombrie, la școală. Prima noastră îmbrățișare... și pupicul acela stângaci, jumătate pe buze, jumătate pe obraz. Eram atât de emoționat și de fâstâcit, încât nici nu mai știam ce fac și n-aveam idee cum o să-l primești. Inima îmi bătea să-mi sară din piept. Dar dacă aș putea da timpul înapoi, n-aș schimba nimic — pentru că pupicul acela pe jumătate a fost începutul celei mai frumoase povești din viața mea.",
+      "Și după el au venit toate celelalte: emoțiile, mesajele pe care le citeam de zece ori, întâlnirile după care nu reușeam să adorm de cât zâmbeam. Mi le amintesc pe toate și le păstrez în suflet ca pe cele mai prețioase comori.",
       "De când ești în viața mea, totul are altă culoare. Diminețile sunt mai frumoase pentru că mă trezesc cu gândul la tine. Zilele grele sunt mai ușoare pentru că știu că la capătul lor ești tu. Iar serile cu tine au devenit locul meu preferat din lume.",
       "În anul acesta am învățat că fericirea nu e un loc în care ajungi. Fericirea e un om. Și omul acela ești tu.",
       "Iubesc felul în care râzi din toată inima. Iubesc cum ți se luminează ochii când vorbești despre lucrurile care îți plac. Iubesc cum mă privești când crezi că nu te văd. Iubesc până și lucrurile pe care tu nu le iubești la tine, pentru că sunt ale tale — și tot ce e al tău e perfect pentru mine.",

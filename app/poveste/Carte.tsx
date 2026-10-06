@@ -44,25 +44,47 @@ function Calendar() {
   );
 }
 
-// Hartă desenată, folosită până primim o poză cu locul
-function Harta() {
+// Școala unde a început totul, desenată (până primim o poză)
+function Scoala() {
   return (
     <svg viewBox="0 0 120 120" aria-hidden>
-      <rect width="120" height="120" fill="#e4eef9" />
-      <circle cx="30" cy="34" r="13" fill="#cddff1" />
-      <rect x="76" y="80" width="24" height="17" rx="4" fill="#cddff1" />
-      <path d="M-5 80C20 70 30 94 55 85C80 76 88 52 125 58" stroke="#a5c6ec" strokeWidth="9" fill="none" />
-      <g stroke="#b3cbe9" strokeWidth="1">
-        {[14, 26, 50, 62, 98, 108].map((y) => (
-          <line key={y} x1="0" y1={y} x2="120" y2={y - 6} />
-        ))}
-        {[8, 22, 58, 84, 100, 112].map((x) => (
-          <line key={x} x1={x} y1="0" x2={x + 10} y2="120" />
-        ))}
+      <defs>
+        <linearGradient id="sc-cer" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#c9def6" />
+          <stop offset="1" stopColor="#f1f6fc" />
+        </linearGradient>
+      </defs>
+      <rect width="120" height="120" fill="url(#sc-cer)" />
+      <g fill="#fff">
+        <ellipse cx="24" cy="25" rx="12" ry="5" />
+        <ellipse cx="31" cy="21" rx="8" ry="5" />
+        <ellipse cx="96" cy="32" rx="10" ry="4" />
       </g>
-      <path d="M0 42L120 30M10 120L40 0M70 0L92 120M0 104L120 92" stroke="#7da3d2" strokeWidth="2.4" fill="none" />
-      <ellipse cx="60" cy="71" rx="7" ry="2.4" fill="#1d3b6e" opacity=".25" />
-      <path d={INIMA} transform="translate(50.5 50) scale(.8)" fill="#e2456f" stroke="#fff" strokeWidth="1.2" />
+      <rect x="12.5" y="84" width="3" height="13" fill="#8a6a4a" />
+      <circle cx="14" cy="80" r="11" fill="#9cc59a" />
+      <rect x="104.5" y="83" width="3" height="14" fill="#8a6a4a" />
+      <circle cx="106" cy="78" r="12" fill="#8fbd8e" />
+      <rect y="95" width="120" height="25" fill="#cfe3c4" />
+      <path d="M53 120L56 97H64L67 120Z" fill="#ece1c9" />
+      <rect x="24" y="58" width="72" height="39" fill="#f3d9b1" />
+      <rect x="22" y="55" width="76" height="4" fill="#c96b5a" />
+      <rect x="45" y="44" width="30" height="53" fill="#f8e4c4" />
+      <polygon points="42,46 78,46 60,29" fill="#c96b5a" />
+      <circle cx="60" cy="39.5" r="4.6" fill="#fff" stroke="#8a5a3c" strokeWidth="1" />
+      <path d="M60 37V39.6H62.2" stroke="#8a5a3c" strokeWidth=".9" fill="none" />
+      <g fill="#a8c8ee" stroke="#fff" strokeWidth="1">
+        {[29, 37, 77, 85].map((x) =>
+          [64, 78].map((y) => <rect key={`${x}-${y}`} x={x} y={y} width="6" height="8" />),
+        )}
+        <rect x="50" y="51" width="6" height="8" />
+        <rect x="64" y="51" width="6" height="8" />
+      </g>
+      <path d="M55 97V85Q55 79.5 60 79.5Q65 79.5 65 85V97Z" fill="#8a5a3c" />
+      <line x1="60" y1="29" x2="60" y2="19" stroke="#8a5a3c" strokeWidth="1" />
+      <path d="M60 19.5L68.5 22.2L60 25Z" fill="#e2456f" />
+      <path d={INIMA} transform="translate(78 7) scale(.6)" fill="#e2456f" />
+      <path d={INIMA} transform="translate(28 38) scale(.36)" fill="#f08bb0" />
+      <path d={INIMA} transform="translate(90 50) scale(.3)" fill="#f08bb0" />
     </svg>
   );
 }
@@ -90,7 +112,7 @@ export default function Carte({ onGata }: { onGata: () => void }) {
             <p className="zi-noastra__luna">{LUNI[luna - 1]}</p>
             <p className="zi-noastra__an">{an}</p>
             <Calendar />
-            <p className="zi-noastra__nota">ziua în care a început totul</p>
+            <p className="zi-noastra__nota">ziua primei noastre îmbrățișări</p>
             <Continua onClick={onGata} />
           </div>
         </div>
@@ -116,7 +138,7 @@ export default function Carte({ onGata }: { onGata: () => void }) {
                 <span>povestea</span> noastră
               </p>
               <div className="loc__cerc">
-                {continut.pozaLoc ? <Image src={continut.pozaLoc} alt={continut.locul} fill sizes="200px" /> : <Harta />}
+                {continut.pozaLoc ? <Image src={continut.pozaLoc} alt={continut.locul} fill sizes="200px" /> : <Scoala />}
               </div>
               <p className="loc__nume">{continut.locul}</p>
               <Continua className="doar-ingust" onClick={() => setPas(2)} />
