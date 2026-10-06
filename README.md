@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pentru Ariana ❤
 
-## Getting Started
+Site-cadou pentru aniversarea de 1 an: intro de basm cu castel și artificii, „Pregătită pentru o surpriză?”, cartea poveștii, cele 3 cufere (scrisoarea, amintirile, melodia) și finalul cu numărătoarea „Un an împreună”.
 
-First, run the development server:
+Făcut pentru telefon (iPhone 13 / 15 Plus), merge și pe laptop. Fără bază de date — totul e static.
+
+## Ce se modifică și unde
+
+Tot ce e personal stă în [`app/continut.ts`](app/continut.ts): numele, data începutului, locul, scrisoarea, pozele, melodia.
+
+- **Poze**: se pun în `public/poze/` și se scriu în `continut.ts` ca `"/poze/nume.jpg"`.
+- **Muzică de fundal**: fișierul `public/muzica.mp3` și `muzica: "/muzica.mp3"` în `continut.ts`.
+
+## Rulare locală
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Previzualizare directă a unei scene: `/?s=cufere`, `/?s=scrisoare`, `/?s=final`, sau o secundă din intro: `/?s=intro&t=17`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Publicare
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Repo-ul se importă în Vercel (Add New → Project → Import), fără nicio setare în plus.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Fontul Waltograph (`app/fonts/`) e gratuit pentru uz personal, necomercial — licența e lângă el.
