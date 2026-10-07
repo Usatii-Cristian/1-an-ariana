@@ -166,7 +166,7 @@ export default function Scrisoare({ onInapoi }: { onInapoi: () => void }) {
                 ))}
                 <p className="pergament__semnatura" style={intarziere()}>
                   {s.semnatura}
-                  <span>{continut.el}</span>
+                  <span>{s.nume}</span>
                 </p>
               </div>
             </div>

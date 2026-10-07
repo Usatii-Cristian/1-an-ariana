@@ -68,9 +68,10 @@ function Cufar() {
   );
 }
 
-export default function Cufere({ deschise, onDeschide, onFinal }: {
+export default function Cufere({ deschise, onAtinge, onDeschide, onFinal }: {
   deschise: number[];
-  onDeschide: (i: number) => void;
+  onAtinge: (i: number) => void; // chiar în clipa atingerii (pentru sunet)
+  onDeschide: (i: number) => void; // după ce s-a deschis capacul
   onFinal: () => void;
 }) {
   const [seDeschide, setSeDeschide] = useState<number | null>(null);
@@ -79,6 +80,7 @@ export default function Cufere({ deschise, onDeschide, onFinal }: {
   const deschide = (i: number) => {
     if (seDeschide !== null) return;
     setSeDeschide(i);
+    onAtinge(i);
     window.setTimeout(() => onDeschide(i), 1200);
   };
 

@@ -47,7 +47,7 @@ export default function Final({ onRevezi }: { onRevezi: () => void }) {
           ))}
         </div>
         <p className="final__poveste">
-          ...și au trăit fericiți până la adânci bătrâneți.
+          ...și au trăit fericiți, în căsuța lor, până la adânci bătrâneți.
           <br />
           Doar că povestea noastră abia a început.
         </p>

@@ -16,6 +16,11 @@ const SCENE = ["intro", "surpriza", "carte", "cufere", "scrisoare", "amintiri", 
 type Scena = (typeof SCENE)[number];
 const CUFERE: Scena[] = ["scrisoare", "amintiri", "melodie"];
 
+type Pista = "fundal" | "piesa";
+type Sursa = Pista | null;
+// Pe iPhone volumul unui <audio> nu se poate schimba, așa că tranzițiile trec prin Web Audio
+type Mixer = { ctx: AudioContext } & Partial<Record<Pista, GainNode>>;
+
 // Stele generate determinist, ca serverul și telefonul să deseneze același cer
 function aleator(seed: number) {
   return () => {
@@ -58,7 +63,12 @@ export default function Poveste() {
   const [deschise, setDeschise] = useState<number[]>([]);
   const [pornit, setPornit] = useState(false);
   const [sunet, setSunet] = useState(true);
-  const audio = useRef<HTMLAudioElement>(null);
+  const [sursa, setSursa] = useState<Sursa>(null); // ce piesă se aude acum
+  const fundal = useRef<HTMLAudioElement>(null); // muzica de fundal
+  const piesa = useRef<HTMLAudioElement>(null); // „melodia noastră” din cufăr
+  const mixer = useRef<Mixer | null>(null);
+  const opriri = useRef<Partial<Record<Pista, number>>>({});
+  const activ = useRef<HTMLAudioElement | null>(null);
   const tranzitie = useRef(0);
   const trezie = useRef<WakeLockSentinel | null>(null);
 
@@ -96,28 +106,74 @@ export default function Poveste() {
     const p = matchMedia("(orientation: portrait)").matches ? "p" : "l";
     const poze = [`/img/padure-${p}.webp`, `/img/nori-${p}.webp`];
     poze.forEach((src) => (new Image().src = src));
-    const reia = () => document.visibilityState === "visible" && tineEcranulAprins();
+    // la întoarcerea în aplicație: ecranul rămâne aprins și muzica pornește din nou
+    const reia = () => {
+      if (document.visibilityState !== "visible") return;
+      tineEcranulAprins();
+      mixer.current?.ctx.resume();
+      activ.current?.play().catch(() => {});
+    };
     document.addEventListener("visibilitychange", reia);
     return () => document.removeEventListener("visibilitychange", reia);
   }, [pornit, tineEcranulAprins]);
 
-  // Muzica de fundal tace cât timp rulează filmul de la început și melodia de pe YouTube
+  // Tranziții de sunet: piesa care trebuie să se audă crește încet, cealaltă se stinge încet și
+  // abia apoi se oprește — așa, la întoarcere, continuă de unde a rămas
   useEffect(() => {
-    const a = audio.current;
-    if (!a || !pornit) return;
-    if (sunet && scena !== "intro" && scena !== "melodie") a.play().catch(() => {});
-    else a.pause();
-  }, [scena, sunet, pornit]);
+    if (!pornit) return;
+    const m = mixer.current;
+    activ.current = null;
+    for (const [nume, el, durata] of [["fundal", fundal.current, 2.5], ["piesa", piesa.current, 1.2]] as const) {
+      if (!el) continue;
+      window.clearTimeout(opriri.current[nume]);
+      const aud = sunet && sursa === nume;
+      m?.[nume]?.gain.setTargetAtTime(aud ? 1 : 0, m.ctx.currentTime, durata / 4);
+      if (aud) {
+        activ.current = el;
+        m?.ctx.resume();
+        el.play().catch(() => {});
+      } else if (!el.paused) {
+        opriri.current[nume] = window.setTimeout(() => el.pause(), m?.[nume] ? durata * 1000 : 0);
+      }
+    }
+  }, [sursa, sunet, pornit]);
 
-  // Atingerea de pe ecranul de start: ținem ecranul aprins și „deblocăm” muzica pe iPhone
+  // Atingerea de pe ecranul de start (gest al utilizatorului): ecranul rămâne aprins, pornim mixerul
+  // și „deblocăm” ambele playere, ca pe iPhone să poată cânta mai târziu fără altă atingere
   const laPornire = () => {
     setPornit(true);
+    setSursa(null);
     tineEcranulAprins();
-    const a = audio.current;
-    if (a) {
+    const sesiune = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+    if (sesiune) sesiune.type = "playback"; // se aude și cu telefonul pe silențios
+    if (!mixer.current && typeof AudioContext !== "undefined") {
+      try {
+        const ctx = new AudioContext();
+        const leaga = (el: HTMLAudioElement | null) => {
+          if (!el) return undefined;
+          const g = ctx.createGain();
+          g.gain.value = 0;
+          ctx.createMediaElementSource(el).connect(g).connect(ctx.destination);
+          return g;
+        };
+        mixer.current = { ctx, fundal: leaga(fundal.current), piesa: leaga(piesa.current) };
+      } catch {
+        // fără mixer: piesele doar pornesc și se opresc, fără tranziții
+      }
+    }
+    mixer.current?.ctx.resume();
+    for (const a of [fundal.current, piesa.current]) {
+      if (!a) continue;
       a.play().catch(() => {});
       a.pause();
     }
+  };
+
+  // „Melodia noastră” pornește chiar din clipa în care atinge cufărul, iar muzica de fundal se stinge
+  const atingeCufar = (i: number) => {
+    if (CUFERE[i] !== "melodie") return;
+    if (piesa.current) piesa.current.currentTime = 0;
+    setSursa("piesa");
   };
 
   const deschideCufar = (i: number) => {
@@ -125,43 +181,74 @@ export default function Poveste() {
     mergi(CUFERE[i]);
   };
 
-  const laCufere = () => mergi("cufere");
+  const cautaInPiesa = (f: number) => {
+    const a = piesa.current;
+    if (a?.duration) a.currentTime = f * a.duration;
+  };
+
+  const laCufere = () => {
+    setSursa("fundal");
+    mergi("cufere");
+  };
 
   return (
     <main className="poveste">
       <Cer />
       <div key={scena} className={iese ? "scena scena--iese" : "scena"}>
-        {scena === "intro" && <Intro seek={seek} onStart={laPornire} onGata={() => mergi("surpriza")} />}
+        {scena === "intro" && (
+          <Intro
+            seek={seek}
+            onStart={laPornire}
+            onGata={() => {
+              setSursa("fundal");
+              mergi("surpriza");
+            }}
+          />
+        )}
         {scena === "surpriza" && <Surpriza onDa={() => mergi("carte")} />}
         {scena === "carte" && <Carte onGata={laCufere} />}
-        {scena === "cufere" && <Cufere deschise={deschise} onDeschide={deschideCufar} onFinal={() => mergi("final")} />}
+        {scena === "cufere" && (
+          <Cufere deschise={deschise} onAtinge={atingeCufar} onDeschide={deschideCufar} onFinal={() => mergi("final")} />
+        )}
         {scena === "scrisoare" && <Scrisoare onInapoi={laCufere} />}
         {scena === "amintiri" && <Amintiri ultima={deschise.length === 3} onInapoi={laCufere} />}
-        {scena === "melodie" && <Melodie onInapoi={laCufere} />}
-        {scena === "final" && <Final onRevezi={() => mergi("intro")} />}
+        {scena === "melodie" && (
+          <Melodie
+            audio={piesa}
+            canta={sunet}
+            onComuta={() => setSunet((s) => !s)}
+            onCauta={cautaInPiesa}
+            onInapoi={laCufere}
+          />
+        )}
+        {scena === "final" && (
+          <Final
+            onRevezi={() => {
+              setSursa(null);
+              mergi("intro");
+            }}
+          />
+        )}
       </div>
 
-      {continut.muzica && (
-        <>
-          <audio ref={audio} src={continut.muzica} loop preload="auto" />
-          {pornit && (
-            <button
-              type="button"
-              className="btn-sunet"
-              onClick={() => setSunet((s) => !s)}
-              aria-label={sunet ? "Oprește muzica" : "Pornește muzica"}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden>
-                <path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor" />
-                {sunet ? (
-                  <path d="M16 8.5a5 5 0 0 1 0 7M18.8 5.7a9 9 0 0 1 0 12.6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
-                ) : (
-                  <path d="M16 9l6 6m0-6l-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                )}
-              </svg>
-            </button>
-          )}
-        </>
+      {continut.muzica && <audio ref={fundal} src={continut.muzica} loop preload="none" />}
+      <audio ref={piesa} src={continut.melodie.fisier} loop preload="none" />
+      {pornit && scena !== "intro" && (
+        <button
+          type="button"
+          className="btn-sunet"
+          onClick={() => setSunet((s) => !s)}
+          aria-label={sunet ? "Oprește muzica" : "Pornește muzica"}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden>
+            <path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor" />
+            {sunet ? (
+              <path d="M16 8.5a5 5 0 0 1 0 7M18.8 5.7a9 9 0 0 1 0 12.6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+            ) : (
+              <path d="M16 9l6 6m0-6l-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            )}
+          </svg>
+        </button>
       )}
     </main>
   );

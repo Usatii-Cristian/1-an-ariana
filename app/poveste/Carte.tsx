@@ -112,7 +112,7 @@ export default function Carte({ onGata }: { onGata: () => void }) {
             <p className="zi-noastra__luna">{LUNI[luna - 1]}</p>
             <p className="zi-noastra__an">{an}</p>
             <Calendar />
-            <p className="zi-noastra__nota">ziua primei noastre îmbrățișări</p>
+            <p className="zi-noastra__nota">ziua în care am devenit „noi”</p>
             <Continua onClick={onGata} />
           </div>
         </div>
@@ -141,6 +141,7 @@ export default function Carte({ onGata }: { onGata: () => void }) {
                 {continut.pozaLoc ? <Image src={continut.pozaLoc} alt={continut.locul} fill sizes="200px" /> : <Scoala />}
               </div>
               <p className="loc__nume">{continut.locul}</p>
+              <p className="loc__detaliu">{continut.locDetaliu}</p>
               <Continua className="doar-ingust" onClick={() => setPas(2)} />
             </div>
           </div>
