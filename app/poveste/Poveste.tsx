@@ -12,7 +12,7 @@ import Scrisoare from "./Scrisoare";
 import Surpriza from "./Surpriza";
 import { Steluta } from "./ui";
 
-const SCENE = ["start", "intro", "surpriza", "carte", "cufere", "scrisoare", "amintiri", "melodie", "final"] as const;
+const SCENE = ["intro", "surpriza", "carte", "cufere", "scrisoare", "amintiri", "melodie", "final"] as const;
 type Scena = (typeof SCENE)[number];
 const CUFERE: Scena[] = ["scrisoare", "amintiri", "melodie"];
 
@@ -51,22 +51,8 @@ function Cer() {
   );
 }
 
-function Start({ onStart }: { onStart: () => void }) {
-  return (
-    <div className="start">
-      <Steluta className="start__stea" />
-      <h1 className="start__titlu">Pentru {continut.ea}</h1>
-      <p className="start__sub">o poveste scrisă doar pentru tine</p>
-      <button type="button" className="btn-magic" onClick={onStart}>
-        Deschide povestea
-      </button>
-      {continut.muzica && <p className="start__hint">🎧 cu sunetul pornit</p>}
-    </div>
-  );
-}
-
 export default function Poveste() {
-  const [scena, setScena] = useState<Scena>("start");
+  const [scena, setScena] = useState<Scena>("intro");
   const [iese, setIese] = useState(false);
   const [seek, setSeek] = useState(0);
   const [deschise, setDeschise] = useState<number[]>([]);
@@ -115,19 +101,23 @@ export default function Poveste() {
     return () => document.removeEventListener("visibilitychange", reia);
   }, [pornit, tineEcranulAprins]);
 
-  // Muzica de fundal tace cât timp rulează melodia de pe YouTube
+  // Muzica de fundal tace cât timp rulează filmul de la început și melodia de pe YouTube
   useEffect(() => {
     const a = audio.current;
     if (!a || !pornit) return;
-    if (sunet && scena !== "melodie") a.play().catch(() => {});
+    if (sunet && scena !== "intro" && scena !== "melodie") a.play().catch(() => {});
     else a.pause();
   }, [scena, sunet, pornit]);
 
-  const start = () => {
+  // Atingerea de pe ecranul de start: ținem ecranul aprins și „deblocăm” muzica pe iPhone
+  const laPornire = () => {
     setPornit(true);
     tineEcranulAprins();
-    audio.current?.play().catch(() => {});
-    mergi("intro");
+    const a = audio.current;
+    if (a) {
+      a.play().catch(() => {});
+      a.pause();
+    }
   };
 
   const deschideCufar = (i: number) => {
@@ -141,8 +131,7 @@ export default function Poveste() {
     <main className="poveste">
       <Cer />
       <div key={scena} className={iese ? "scena scena--iese" : "scena"}>
-        {scena === "start" && <Start onStart={start} />}
-        {scena === "intro" && <Intro seek={seek} onGata={() => mergi("surpriza")} />}
+        {scena === "intro" && <Intro seek={seek} onStart={laPornire} onGata={() => mergi("surpriza")} />}
         {scena === "surpriza" && <Surpriza onDa={() => mergi("carte")} />}
         {scena === "carte" && <Carte onGata={laCufere} />}
         {scena === "cufere" && <Cufere deschise={deschise} onDeschide={deschideCufar} onFinal={() => mergi("final")} />}

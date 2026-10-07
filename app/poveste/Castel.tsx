@@ -1,7 +1,6 @@
 import { INIMA } from "./ui";
 
-// Castel de basm desenat de mână. viewBox 400×570, solul la y=444, sub el reflexia în apă.
-// Vitraliul din mijloc (≈ 50% / 56.8%) e ținta zoom-ului din intro.
+// Castel de basm desenat de mână (silueta din final). viewBox 400×570, solul la y=444, sub el reflexia în apă.
 
 type Turn = { x: number; sus: number; jos: number; w: number; con: number; aur?: boolean; f?: number };
 

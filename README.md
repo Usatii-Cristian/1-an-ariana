@@ -1,6 +1,6 @@
 # Pentru Ariana ❤
 
-Site-cadou pentru aniversarea de 1 an: intro de basm cu castel și artificii, „Pregătită pentru o surpriză?”, cartea poveștii, cele 3 cufere (scrisoarea, amintirile, melodia) și finalul cu numărătoarea „Un an împreună”.
+Site-cadou pentru aniversarea de 1 an: filmul de basm de la început (`public/intro/inceput.mp4`) cu „Ariana & Cristian” pe apă, zoom în vitraliul castelului și scena „Totul a început când...”, apoi „Pregătită pentru o surpriză?”, cartea poveștii, cele 3 cufere (scrisoarea, amintirile, melodia) și finalul cu numărătoarea „Un an împreună”.
 
 Făcut pentru telefon (iPhone 13 / 15 Plus), merge și pe laptop. Fără bază de date — totul e static.
 
@@ -18,7 +18,7 @@ npm install
 npm run dev
 ```
 
-Previzualizare directă a unei scene: `/?s=cufere`, `/?s=scrisoare`, `/?s=final`, sau o secundă din intro: `/?s=intro&t=17`.
+Previzualizare directă a unei scene: `/?s=cufere`, `/?s=scrisoare`, `/?s=final`, sau o secundă din filmul de la început: `/?s=intro&t=23` (numele apar la 24 s, zoom-ul la 30 s).
 
 ## Publicare
 

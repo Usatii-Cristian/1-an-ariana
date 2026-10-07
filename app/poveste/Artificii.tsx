@@ -5,7 +5,6 @@ import { useEffect, useImperativeHandle, useRef, type Ref } from "react";
 export type ArtificiiApi = {
   porneste: (inimi?: boolean) => void;
   opreste: () => void;
-  arc: (castel: DOMRect) => void; // arcul de scântei peste castel, de la dreapta la stânga
 };
 
 type Particula = {
@@ -21,7 +20,6 @@ type Particula = {
   sclipeste: boolean;
 };
 type Racheta = { x: number; y: number; vy: number; tinta: number; culori: string[] };
-type Cometa = { cx: number; by: number; rx: number; ry: number; t: number };
 
 const CULORI = [
   ["#fff3c4", "#ffd36b"],
@@ -30,7 +28,6 @@ const CULORI = [
   ["#c8fff3", "#7fe3ff"],
   ["#fff3c4", "#ffb3e1"],
 ];
-const SCANTEI = ["#ffffff", "#dff1ff", "#fff3c4", "#bfe0ff"];
 const MAX_PARTICULE = 1400;
 
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
@@ -45,7 +42,6 @@ export default function Artificii({ ref, className }: { ref?: Ref<ArtificiiApi>;
     () => ({
       porneste: (inimi) => motor.current?.porneste(inimi),
       opreste: () => motor.current?.opreste(),
-      arc: (r) => motor.current?.arc(r),
     }),
     [],
   );
@@ -70,7 +66,6 @@ export default function Artificii({ ref, className }: { ref?: Ref<ArtificiiApi>;
 
     const P: Particula[] = [];
     const R: Racheta[] = [];
-    let cometa: Cometa | null = null;
     let activ = false;
     let inimi = false;
     let urmatoarea = 0;
@@ -147,25 +142,6 @@ export default function Artificii({ ref, className }: { ref?: Ref<ArtificiiApi>;
         }
       }
 
-      if (cometa) {
-        cometa.t += dt / 150;
-        const f = -0.12 + Math.min(cometa.t, 1) * (Math.PI + 0.24);
-        const x = cometa.cx + cometa.rx * Math.cos(f);
-        const y = cometa.by - cometa.ry * Math.sin(f);
-        for (let i = 0; i < 6 * dt; i++)
-          adauga({ x: x + rnd(-2, 2), y: y + rnd(-2, 2), vx: rnd(-0.35, 0.35), vy: rnd(-0.2, 0.45), viata: 0, max: rnd(70, 140), c: alege(SCANTEI), m: rnd(0.8, 1.7), g: 0.006, sclipeste: true });
-        const raza = 9 * k;
-        const g = ctx.createRadialGradient(x, y, 0, x, y, raza);
-        g.addColorStop(0, "rgba(255,255,255,1)");
-        g.addColorStop(0.35, "rgba(200,230,255,.8)");
-        g.addColorStop(1, "rgba(160,210,255,0)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(x, y, raza, 0, Math.PI * 2);
-        ctx.fill();
-        if (cometa.t >= 1) cometa = null;
-      }
-
       for (let i = P.length - 1; i >= 0; i--) {
         const p = P[i];
         p.viata += dt;
@@ -188,7 +164,7 @@ export default function Artificii({ ref, className }: { ref?: Ref<ArtificiiApi>;
       }
       ctx.globalAlpha = 1;
 
-      if (activ || R.length || P.length || cometa) raf = requestAnimationFrame(cadru);
+      if (activ || R.length || P.length) raf = requestAnimationFrame(cadru);
       else {
         raf = 0;
         ctx.clearRect(0, 0, W, H);
@@ -209,17 +185,6 @@ export default function Artificii({ ref, className }: { ref?: Ref<ArtificiiApi>;
       },
       opreste() {
         activ = false;
-      },
-      arc(r) {
-        const cr = c.getBoundingClientRect();
-        cometa = {
-          cx: r.left + r.width / 2 - cr.left,
-          by: r.top + r.height * (444 / 570) - cr.top,
-          rx: Math.min(r.width * 0.6, W * 0.47),
-          ry: r.height * 0.8,
-          t: 0,
-        };
-        bucla();
       },
     };
 
