@@ -25,6 +25,7 @@ export default function Intro({ seek, onStart, onGata }: { seek: number; onStart
   const [t, setT] = useState(0);
   const [pauza, setPauza] = useState(false);
   const [seIncarca, setSeIncarca] = useState(false);
+  const [blocat, setBlocat] = useState(false); // filmul stă pe loc de prea mult (internet slab)
   const [format, setFormat] = useState(0); // lățime/înălțime a filmului încărcat (telefonul primește varianta decupată)
   const gata = useEffectEvent(onGata);
 
@@ -40,12 +41,22 @@ export default function Intro({ seek, onStart, onGata }: { seek: number; onStart
     setEtapa("film");
   };
 
-  // Ceasul filmului conduce textele și sfârșitul (rotunjit la 0,1 s, ca să nu randăm la fiecare cadru)
+  // Ceasul filmului conduce textele și sfârșitul (rotunjit la 0,1 s, ca să nu randăm la fiecare cadru).
+  // Pe internet slab filmul merge sacadat: dacă a rămas în total cu peste 8 s în urma timpului real,
+  // oferim „Continuă povestea”.
   useEffect(() => {
     if (etapa !== "film") return;
     const v = video.current!;
     let raf = 0;
+    let ultimReal = performance.now();
+    let ultimFilm = v.currentTime;
+    let intarziere = 0;
     const tic = () => {
+      const acum = performance.now();
+      if (!v.paused) intarziere += Math.min((acum - ultimReal) / 1000, 0.25) - Math.max(v.currentTime - ultimFilm, 0);
+      ultimReal = acum;
+      ultimFilm = v.currentTime;
+      setBlocat(intarziere > 8);
       setT(Math.floor(v.currentTime * 10) / 10);
       if (v.currentTime >= SFARSIT || v.ended) setEtapa("sfarsit");
       else raf = requestAnimationFrame(tic);
@@ -53,6 +64,13 @@ export default function Intro({ seek, onStart, onGata }: { seek: number; onStart
     raf = requestAnimationFrame(tic);
     return () => cancelAnimationFrame(raf);
   }, [etapa]);
+
+  // Dacă browserul a citit deja dimensiunile filmului înainte să fie gata pagina, le luăm acum
+  useEffect(() => {
+    const v = video.current;
+    if (!v || v.readyState < 1) return;
+    queueMicrotask(() => setFormat(v.videoWidth / v.videoHeight));
+  }, []);
 
   useEffect(() => {
     if (etapa !== "sfarsit") return;
@@ -121,7 +139,12 @@ export default function Intro({ seek, onStart, onGata }: { seek: number; onStart
         </div>
       )}
 
-      {inFilm && seIncarca && !pauza && <Steluta className="intro__incarcare" />}
+      {inFilm && seIncarca && !pauza && !blocat && <Steluta className="intro__incarcare" />}
+      {inFilm && blocat && (
+        <button type="button" className="intro__sari" onClick={() => setEtapa("sfarsit")}>
+          Continuă povestea →
+        </button>
+      )}
       {inFilm && pauza && (
         <button type="button" className="intro__reia" onClick={() => video.current?.play()}>
           <span>▶</span> atinge ca să continuăm

@@ -216,7 +216,7 @@ button {
 
 .titlu-script {
   font-family: var(--f-script), cursive;
-  font-weight: 400;
+  font-weight: 600;
   color: #fff;
   text-align: center;
   line-height: 1.12;
@@ -224,7 +224,7 @@ button {
   text-wrap: balance;
 }
 .titlu-mana {
-  font-family: var(--f-mana), cursive;
+  font-family: var(--f-script), cursive;
   font-weight: 700;
   color: #fff;
   text-align: center;
@@ -319,7 +319,7 @@ button {
   object-fit: cover;
 }
 .polaroid figcaption {
-  font-family: var(--f-mana), cursive;
+  font-family: var(--f-script), cursive;
   font-weight: 600;
   font-size: 20px;
   color: #3a3150;
@@ -334,7 +334,8 @@ button {
   justify-items: center;
   gap: 8px;
   color: rgba(255, 255, 255, 0.92);
-  font-family: var(--f-mana), cursive;
+  font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: 18px;
   background: linear-gradient(150deg, #f6a6c9, #9b8cff);
 }
@@ -401,7 +402,7 @@ button {
 }
 .poarta__titlu {
   font-family: var(--f-script), cursive;
-  font-weight: 400;
+  font-weight: 600;
   font-size: min(16vw, 13svh, 104px);
   line-height: 1.05;
   word-spacing: 0.12em;
@@ -439,7 +440,7 @@ button {
     mask-image: linear-gradient(transparent, #000 7%, #000 93%, transparent);
   }
   .film {
-    --ar: calc(1104 / 976);
+    --ar: calc(768 / 976); /* varianta de telefon: doar mijlocul filmului, cât se vede pe iPhone */
   }
 }
 .film {
@@ -635,6 +636,23 @@ button {
     transform: rotate(360deg);
   }
 }
+.intro__sari {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: calc(var(--jos) + 3svh);
+  transform: translateX(-50%);
+  padding: 11px 22px;
+  border-radius: 999px;
+  font-style: italic;
+  font-size: 16px;
+  color: #fff;
+  background: rgba(10, 25, 80, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: aparitie 0.8s ease;
+}
 .intro__reia {
   position: absolute;
   inset: 0;
@@ -660,18 +678,6 @@ button {
   font-size: 26px;
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-/* Steagul castelului din final */
-.castel__steag {
-  transform-box: fill-box;
-  transform-origin: 0% 60%;
-  animation: steag 1.4s ease-in-out infinite alternate;
-}
-@keyframes steag {
-  to {
-    transform: skewY(7deg) scaleX(0.88);
-  }
 }
 
 /* ───────── 2. pregătită pentru o surpriză? ───────── */
@@ -853,7 +859,7 @@ button {
   transition: left 0.35s ease, top 0.35s ease;
 }
 .btn-poveste--mesaj {
-  font-family: var(--f-mana), cursive;
+  font-family: var(--f-script), cursive;
   font-weight: 700;
   font-size: 20px;
   white-space: nowrap;
@@ -996,6 +1002,7 @@ button {
   min-height: 44px;
   padding: 0 6px;
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: calc(var(--pw) * 0.09);
   color: #7b3fa0;
   animation: continua 2.4s ease-in-out infinite;
@@ -1026,6 +1033,7 @@ button {
 }
 .coperta__nume {
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: calc(var(--pw) * 0.19);
   line-height: 1.1;
   color: #4b3c8a;
@@ -1053,6 +1061,7 @@ button {
 
 .loc__titlu {
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: calc(var(--pw) * 0.1);
   line-height: 1.1;
   color: #3b3360;
@@ -1079,6 +1088,7 @@ button {
 }
 .loc__nume {
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: calc(var(--pw) * 0.085);
   color: #4b3c8a;
 }
@@ -1091,6 +1101,7 @@ button {
 
 .zi-noastra__luna {
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: calc(var(--pw) * 0.14);
   line-height: 1;
   color: #2f6fd0;
@@ -1237,6 +1248,7 @@ button {
   padding: 10px 28px 12px;
   border-radius: 999px;
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: 32px;
   color: #fff;
   background: linear-gradient(135deg, rgba(255, 120, 190, 0.4), rgba(180, 120, 255, 0.4));
@@ -1545,6 +1557,7 @@ button {
 }
 .pergament__salut {
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: 34px;
   line-height: 1.2;
   color: #6a2d1a;
@@ -1569,6 +1582,7 @@ button {
 .pergament__semnatura span {
   display: block;
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-style: normal;
   font-size: 40px;
   line-height: 1.1;
@@ -1711,7 +1725,7 @@ button {
   padding: calc(var(--sus) + 16px) 0 calc(var(--jos) + 18px);
 }
 .galerie__titlu {
-  font-size: min(13vw, 8svh, 72px);
+  font-size: min(11vw, 7svh, 64px);
 }
 .galerie__banda {
   display: flex;
@@ -1848,6 +1862,7 @@ button {
 }
 .melodie__piesa {
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: min(13vw, 7svh, 64px);
   line-height: 1.05;
   text-shadow: 0 0 18px rgba(255, 150, 210, 0.7);
@@ -1920,18 +1935,34 @@ button {
 .final__artificii {
   position: absolute;
   inset: 0;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
 }
+/* Castelul din film: pe ecran lat ocupă tot, ușor întunecat ca textul să se citească */
 .final__castel {
   position: absolute;
-  left: 50%;
-  bottom: -14svh;
-  width: min(78vw, 46svh);
-  transform: translateX(-50%);
-  opacity: 0.45;
-  filter: saturate(0.8) brightness(0.75);
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 10, 40, 0.55), rgba(4, 10, 40, 0.3) 45%, rgba(4, 10, 40, 0.6)),
+    url(/img/castel-l.webp) center 62% / cover;
+  animation: castelApare 2.4s ease both;
+}
+@keyframes castelApare {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+/* pe telefon: castelul întreg jos, cu cerul topindu-se în cerul înstelat; textul deasupra */
+@media (orientation: portrait) {
+  .final__castel {
+    top: auto;
+    height: 52svh;
+    background: linear-gradient(180deg, transparent 40%, rgba(4, 10, 40, 0.45)), url(/img/castel-p.webp) center bottom / cover;
+    -webkit-mask-image: linear-gradient(transparent, #000 38%);
+    mask-image: linear-gradient(transparent, #000 38%);
+  }
 }
 .final__continut {
   position: relative;
@@ -1944,6 +1975,12 @@ button {
   gap: 2.2svh;
   padding: calc(var(--sus) + 16px) 18px calc(var(--jos) + 18px);
   text-align: center;
+}
+@media (orientation: portrait) {
+  .final__continut {
+    justify-content: flex-start;
+    padding-top: calc(var(--sus) + 6svh);
+  }
 }
 .final__continut > * {
   animation: textApare 1.2s ease backwards;
@@ -1972,7 +2009,8 @@ button {
 }
 .final__an {
   font-family: var(--f-script), cursive;
-  font-size: min(15vw, 9svh, 96px);
+  font-weight: 600;
+  font-size: min(13vw, 8.5svh, 92px);
   line-height: 1.1;
   text-shadow: 0 0 22px rgba(170, 205, 255, 0.8);
 }
@@ -2012,7 +2050,8 @@ button {
 }
 .final__te-iubesc {
   font-family: var(--f-script), cursive;
-  font-size: min(15vw, 10svh, 110px);
+  font-weight: 600;
+  font-size: min(12.5vw, 8svh, 96px);
   line-height: 1.1;
   color: #ffd6ea;
   text-shadow: 0 0 26px rgba(255, 120, 190, 0.9);
@@ -2022,6 +2061,7 @@ button {
   align-items: center;
   gap: 8px;
   font-family: var(--f-script), cursive;
+  font-weight: 600;
   font-size: 34px;
 }
 .final__inima {

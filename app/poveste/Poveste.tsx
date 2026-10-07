@@ -62,7 +62,8 @@ export default function Poveste() {
   const [seek, setSeek] = useState(0);
   const [deschise, setDeschise] = useState<number[]>([]);
   const [pornit, setPornit] = useState(false);
-  const [sunet, setSunet] = useState(true);
+  const [sunet, setSunet] = useState(true); // butonul general de sunet (sus, dreapta)
+  const [vinilPauza, setVinilPauza] = useState(false); // pauza de pe vinil oprește doar „melodia noastră”
   const [sursa, setSursa] = useState<Sursa>(null); // ce piesă se aude acum
   const fundal = useRef<HTMLAudioElement>(null); // muzica de fundal
   const piesa = useRef<HTMLAudioElement>(null); // „melodia noastră” din cufăr
@@ -101,20 +102,35 @@ export default function Poveste() {
     return () => window.clearTimeout(id);
   }, []);
 
+  // După film aducem din timp fundalurile cuferelor — nu mai devreme, ca să nu concureze
+  // cu filmul pe internetul telefonului
+  const dupaFilm = scena !== "intro";
+  useEffect(() => {
+    if (!pornit || !dupaFilm) return;
+    const p = matchMedia("(orientation: portrait)").matches ? "p" : "l";
+    for (const src of [`/img/padure-${p}.webp`, `/img/nori-${p}.webp`, `/img/castel-${p}.webp`]) new Image().src = src;
+  }, [pornit, dupaFilm]);
+
   useEffect(() => {
     if (!pornit) return;
-    const p = matchMedia("(orientation: portrait)").matches ? "p" : "l";
-    const poze = [`/img/padure-${p}.webp`, `/img/nori-${p}.webp`];
-    poze.forEach((src) => (new Image().src = src));
     // la întoarcerea în aplicație: ecranul rămâne aprins și muzica pornește din nou
     const reia = () => {
       if (document.visibilityState !== "visible") return;
       tineEcranulAprins();
-      mixer.current?.ctx.resume();
+      mixer.current?.ctx.resume().catch(() => {});
       activ.current?.play().catch(() => {});
     };
+    // plasă de siguranță: dacă Safari a „adormit” mixerul (ex. în timpul filmului), orice atingere îl trezește
+    const trezeste = () => {
+      const ctx = mixer.current?.ctx;
+      if (ctx && ctx.state !== "running") ctx.resume().catch(() => {});
+    };
     document.addEventListener("visibilitychange", reia);
-    return () => document.removeEventListener("visibilitychange", reia);
+    document.addEventListener("pointerdown", trezeste, true);
+    return () => {
+      document.removeEventListener("visibilitychange", reia);
+      document.removeEventListener("pointerdown", trezeste, true);
+    };
   }, [pornit, tineEcranulAprins]);
 
   // Tranziții de sunet: piesa care trebuie să se audă crește încet, cealaltă se stinge încet și
@@ -126,17 +142,17 @@ export default function Poveste() {
     for (const [nume, el, durata] of [["fundal", fundal.current, 2.5], ["piesa", piesa.current, 1.2]] as const) {
       if (!el) continue;
       window.clearTimeout(opriri.current[nume]);
-      const aud = sunet && sursa === nume;
+      const aud = sunet && sursa === nume && !(nume === "piesa" && vinilPauza);
       m?.[nume]?.gain.setTargetAtTime(aud ? 1 : 0, m.ctx.currentTime, durata / 4);
       if (aud) {
         activ.current = el;
-        m?.ctx.resume();
+        m?.ctx.resume().catch(() => {});
         el.play().catch(() => {});
       } else if (!el.paused) {
         opriri.current[nume] = window.setTimeout(() => el.pause(), m?.[nume] ? durata * 1000 : 0);
       }
     }
-  }, [sursa, sunet, pornit]);
+  }, [sursa, sunet, vinilPauza, pornit]);
 
   // Atingerea de pe ecranul de start (gest al utilizatorului): ecranul rămâne aprins, pornim mixerul
   // și „deblocăm” ambele playere, ca pe iPhone să poată cânta mai târziu fără altă atingere
@@ -161,9 +177,11 @@ export default function Poveste() {
         // fără mixer: piesele doar pornesc și se opresc, fără tranziții
       }
     }
-    mixer.current?.ctx.resume();
-    for (const a of [fundal.current, piesa.current]) {
-      if (!a) continue;
+    mixer.current?.ctx.resume().catch(() => {});
+    // muzica de fundal pornește singură la finalul filmului, deci o „deblocăm” acum;
+    // „melodia noastră” se deblochează abia la atingerea cufărului, ca să nu se descarce degeaba
+    const a = fundal.current;
+    if (a) {
       a.play().catch(() => {});
       a.pause();
     }
@@ -172,8 +190,23 @@ export default function Poveste() {
   // „Melodia noastră” pornește chiar din clipa în care atinge cufărul, iar muzica de fundal se stinge
   const atingeCufar = (i: number) => {
     if (CUFERE[i] !== "melodie") return;
-    if (piesa.current) piesa.current.currentTime = 0;
+    const p = piesa.current;
+    if (p) {
+      p.currentTime = 0;
+      // pornită chiar în atingere: pe iPhone, o piesă poate cânta doar dacă a fost pornită dintr-o atingere
+      p.play().catch(() => {});
+      if (!sunet) p.pause();
+    }
+    setVinilPauza(false);
     setSursa("piesa");
+  };
+
+  // butonul de pe vinil: pauză/redare doar pentru piesă; dacă tot sunetul era oprit, îl pornește
+  const comutaVinil = () => {
+    if (!sunet) {
+      setSunet(true);
+      setVinilPauza(false);
+    } else setVinilPauza((p) => !p);
   };
 
   const deschideCufar = (i: number) => {
@@ -215,8 +248,8 @@ export default function Poveste() {
         {scena === "melodie" && (
           <Melodie
             audio={piesa}
-            canta={sunet}
-            onComuta={() => setSunet((s) => !s)}
+            canta={sunet && !vinilPauza}
+            onComuta={comutaVinil}
             onCauta={cautaInPiesa}
             onInapoi={laCufere}
           />
@@ -225,6 +258,7 @@ export default function Poveste() {
           <Final
             onRevezi={() => {
               setSursa(null);
+              setDeschise([]); // povestea o ia de la capăt, cu cuferele închise
               mergi("intro");
             }}
           />

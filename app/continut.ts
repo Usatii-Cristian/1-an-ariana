@@ -21,17 +21,17 @@ export const continut = {
     fisier: "/princess.mp3",
     titlu: "Princess",
     artist: "NOUA UNSPE",
-    poza: "",
+    poza: "/poze/vinil.jpg", // pătrată, centrată pe noi doi
   },
 
   // Cufărul cu amintiri (poza goală = loc pentru poză)
   amintiri: [
-    { poza: "", text: "Prima noastră poză" },
-    { poza: "", text: "Zâmbetul meu preferat" },
-    { poza: "", text: "Noi doi, ca-n povești" },
-    { poza: "", text: "Locul nostru" },
-    { poza: "", text: "Cea mai frumoasă zi" },
-    { poza: "", text: "Și abia am început..." },
+    { poza: "/poze/zambet.jpg", text: "Zâmbetul meu preferat" },
+    { poza: "/poze/scoala.jpg", text: "La școala noastră" },
+    { poza: "/poze/printesa.jpg", text: "Prințesa mea 👑" },
+    { poza: "/poze/trandafiri.jpg", text: "Printre trandafiri 🌹" },
+    { poza: "/poze/cafea.jpg", text: "Buna mea dispoziție: tu ☕" },
+    { poza: "/poze/inceput.jpg", text: "Și abia am început... ✨" },
   ],
 
   scrisoare: {
@@ -56,6 +56,6 @@ export const continut = {
       "Și dacă m-ai întreba din nou cum mă cheamă, ți-aș răspunde la fel de nonșalant ca atunci: „Al tău.” 😏",
     ],
     semnatura: "Cu toată dragostea mea,",
-    nume: "Cristi",
+    nume: "Cristi 🤍",
   },
 };

@@ -59,7 +59,8 @@ export function Polaroid({ poza, text, index = 0, className = "", sizes }: {
     <figure className={`polaroid ${className}`} style={{ "--i": index } as CSSProperties}>
       <div className="polaroid__poza">
         {poza ? (
-          <Image src={poza} alt={text ?? "Amintirea noastră"} fill sizes={sizes} />
+          // eager: banda de poze se derulează singură, deci toate trebuie să fie gata de la început
+          <Image src={poza} alt={text ?? "Amintirea noastră"} fill sizes={sizes} loading="eager" />
         ) : (
           <div className="polaroid__gol" data-v={index % 6}>
             <Inima className="polaroid__gol-inima" />

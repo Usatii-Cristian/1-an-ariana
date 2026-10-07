@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { continut } from "../continut";
 import Artificii, { type ArtificiiApi } from "./Artificii";
-import Castel from "./Castel";
 import { Inima } from "./ui";
 
 const { an, luna, zi } = continut.inceput;
@@ -34,8 +33,8 @@ export default function Final({ onRevezi }: { onRevezi: () => void }) {
 
   return (
     <div className="final">
+      <div className="final__castel" aria-hidden />
       <Artificii ref={artificii} className="final__artificii" />
-      <Castel className="final__castel" />
       <div className="final__continut">
         <p className="final__an">Un an împreună</p>
         <div className="final__contor" role="timer">

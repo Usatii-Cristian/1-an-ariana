@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, Dancing_Script, EB_Garamond, Great_Vibes } from "next/font/google";
+import { Cinzel, Dancing_Script, EB_Garamond } from "next/font/google";
 import localFont from "next/font/local";
 import { continut } from "./continut";
 import "./globals.css";
@@ -11,15 +11,10 @@ const disney = localFont({
   display: "block",
 });
 
-const script = Great_Vibes({
-  weight: "400",
+// Scrisul de mână romantic din titluri — ales să fie ușor de citit
+const script = Dancing_Script({
   subsets: ["latin", "latin-ext"],
   variable: "--f-script",
-});
-
-const mana = Dancing_Script({
-  subsets: ["latin", "latin-ext"],
-  variable: "--f-mana",
 });
 
 const serif = EB_Garamond({
@@ -51,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ro"
-      className={`${disney.variable} ${script.variable} ${mana.variable} ${serif.variable} ${caps.variable}`}
+      className={`${disney.variable} ${script.variable} ${serif.variable} ${caps.variable}`}
     >
       <body>{children}</body>
     </html>
