@@ -13,7 +13,7 @@ export const continut = {
   locDetaliu: "ne știm din clasa a 5-a",
   pozaLoc: "", // gol = școala desenată
 
-  // Muzica de fundal, după filmul de la început (NAVAI – Больше, чем ближе); gol = fără muzică
+  // Muzica de fundal, după filmul de la început (NAVAI – Дай знать); gol = fără muzică
   muzica: "/muzica.mp3",
 
   // Cufărul cu „melodia noastră”: piesa cântă pe un vinil, cu poza în mijlocul discului
